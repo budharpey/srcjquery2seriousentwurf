@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Finde deinen Parkplatz mit der MSR-Traffic Parkapp!</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no" />
+		<link rel="stylesheet" href="styles.css" type="text/css">
+		<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+		<!-- <script src="jquery-1.10.2.js"></script> -->
+
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+				border: none;
+				height: 100%;
+			}
+
+			.ui-page, .ui-content {
+				height: 90%;
+				margin: 0;
+				padding: 0;
+				border: none;
+			}
+			.map_class {
+				margin: 0;
+				padding: 0;
+				border: none;
+				width: 100%;
+				height: 100%;
+			}
+		</style>
+		<script>
+			// $(document).delegate("#map_page", "pageinit", function() {
+			//
+			// console.log("initilisierung erfolgt...");
+			// });
+
+			var gData = null;
+
+			function eqfeed_callback(data) {
+				gData = data;
+			};
+
+			$(document).delegate("#map_page", "pageshow", function() {
+				var filePath = "data/" + "shoreline2004" + ".geojson";
+
+				if ($("#map").html() == "") {
+
+					var map = L.map('map').setView([48.1080, 16.318], 15);
+					L.tileLayer('http://{s}.tile.cloudmade.com/fc023a5d95ab4267b67719837376052e/997/256/{z}/{x}/{y}.png', {
+
+						maxZoom : 18,
+						minZoom : 2
+					}).addTo(map);
+
+					//AJAX CALL
+					$.getScript('http://kreacher.bplaced.net/countries.geojsonp', function() {
+						L.geoJson(gData).addTo(map);
+					});
+
+					// $.getJSON(filePath, function(data) {
+					//
+					// L.geoJson(data).addTo(map);
+					// });
+				}
+			});
+
+			// $(document).bind('pageinit', function() {
+				// $(".ui-content").css('margin-bottom', $('.foot_class').height());
+				// console.log($(".ui-content").css('margin-bottom', $('.foot_class').height()));
+			// })
+		</script>
+
+	</head>
+	<body>
+
+		<div data-role="page" id="main_page">
+			<div data-role="header">
+				<a href="#main_page" data-transition="none" data-direction="reverse" data-role= "button">Start</a>
+				<h1>SCS Wien App</h1>
+			</div>
+			<div id="foot" data-role="footer" class="foot_class" data-position="fixed">
+
+				<div data-role="navbar" data-icon="star" >
+					<ul>
+						<li>
+							<a href="#map_page"  data-icon="search"  data-transition = "none">Karte</a>
+						</li>
+						<li>
+							<a href="#shoppingcenter_page"  data-icon="home" data-transition = "none">SCS Wien</a>
+						</li>
+						<li>
+							<a href="#options_page"   data-icon="star" data-transition = "none">Optionen</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div data-role="page" id="map_page">
+			<div data-role="header">
+				<a href="#main_page" data-transition="none" data-direction="reverse" data-role= "button">Start</a>
+				<h1>Parking Lot</h1>
+			</div>
+
+			<div data-role="content">
+				<div id="map" class="map_class"></div>
+			</div>
+
+			<div id="footes" data-role="footer" class="foot_class" data-position="fixed">
+				<div data-role="navbar" data-icon="star" >
+					<ul>
+						<li>
+							<a href="#map_page"  data-icon="search" data-transition = "none">Karte</a>
+						</li>
+						<li>
+							<a href="#shoppingcenter_page"  data-icon="home" data-transition = "none">SCS Wien</a>
+						</li>
+						<li>
+							<a href="#options_page"   data-icon="star" data-transition = "none">Optionen</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div data-role="page" id="options_page">
+			<div data-role="header">
+				<a href="#main_page" data-transition="none" data-direction="reverse" data-role= "button">Start</a>
+				<h1>Optionen</h1>
+			</div>
+
+			<div data-role="content">
+				<label for="search-basic">Search Input:</label>
+				<input type="search" name="search" id= "search-basic" value="value"/>
+
+				<div data-role="fieldcontain">
+					<label for="slider-3">Search radius:</label>
+					<input type="range" name="slider-3" id="slider-3" value="60" min="0" max="100" />
+				</div>
+
+				<fieldset data-role="controlgroup" data-type="horizontal">
+					<legend>
+						Choose a map type:
+					</legend>
+					<input type="radio" name="radio-choice" id="radio-choice-1" value="choice-1" checked="checked" />
+					<label for="radio-choice-1">Street</label>
+
+					<input type="radio" name="radio-choice" id="radio-choice-2" value="choice-2" />
+					<label for="radio-choice-2">Sattelite</label>
+
+					<input type="radio" name="radio-choice" id="radio-choice-3" value="choice-3" />
+					<label for="radio-choice-3">Hybrid</label>
+
+				</fieldset>
+
+				<label for="flip-1">Update Location:</label>
+				<select name="flip-1" id="flip-1" data-role="slider">
+					<option value="off">Off</option>
+					<option value="on">On</option>
+				</select>
+			</div>
+
+			<div id="footes" data-role="footer" class="foot_class" data-position="fixed">
+				<div data-role="navbar" data-icon="star" >
+					<ul>
+						<li>
+							<a href="#map_page"  data-icon="search" data-transition = "none">Karte</a>
+						</li>
+						<li>
+							<a href="#shoppingcenter_page"  data-icon="home" data-transition = "none">SCS Wien</a>
+						</li>
+						<li>
+							<a href="#options_page"   data-icon="star" data-transition = "none">Optionen</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div data-role="page" id="shoppingcenter_page">
+			<div data-role="header">
+				<a href="#main_page" data-transition="none" data-direction="reverse" data-role= "button">Start</a>
+				<h1>SCS Wien</h1>
+			</div>
+
+			<div data-role="content">
+				<p style="text-align: center; vertical-align: center;">
+					Informationen zu unseren Gesch&auml;ften:
+				</p>
+				<ul data-role="listview" data-inset="true" data-filter="true">
+					<li>
+						<a href="#">Apollo Optik</a>
+					</li>
+					<li>
+						<a href="#">Arcaden Apotheke</a>
+					</li>
+					<li>
+						<a href="#">Calzedonia</a>
+					</li>
+					<li>
+						<a href="#">Cremio</a>
+					</li>
+					<li>
+						<a href="#">Douglas</a>
+					</li>
+					<li>
+						<a href="#">Eiskiosk Gelato e Caffé</a>
+					</li>
+					<li>
+						<a href="#">Fix Reinigung</a>
+					</li>
+					<li>
+						<a href="#">Laden 5</a>
+					</li>
+					<li>
+						<a href="#">Laden 3</a>
+					</li>
+					<li>
+						<a href="#">Laden 4</a>
+					</li>
+					<li>
+						<a href="#">Laden 5</a>
+					</li>
+				</ul>
+
+			</div>
+
+			<div id="footes" data-role="footer" class="foot_class" data-position="fixed">
+				<div data-role="navbar" data-icon="star" >
+					<ul>
+						<li>
+							<a href="#map_page"  data-icon="search" data-transition = "none">Karte</a>
+						</li>
+						<li>
+							<a href="#shoppingcenter_page"  data-icon="home" data-transition = "none">SCS Wien</a>
+						</li>
+						<li>
+							<a href="#options_page"   data-icon="star" data-transition = "none">Optionen</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
